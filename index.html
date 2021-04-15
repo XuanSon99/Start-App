@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>App</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="src/assets/css/style.css">
+</head>
+
+<body>
+  <div id="app">
+    <main>
+      <div class="nav">
+        <span><i class="fas fa-power-off"></i><p>Power</p></span>
+        <span><i class="fas fa-cog"></i><p>Settings</p></span>
+        <span><i class="fas fa-image"></i><p>Pictures</p></span>
+        <span><i class="far fa-file"></i><p>Documents</p></span>
+        <span><i class="fas fa-user-circle"></i><p>Cowboy</p></span>
+      </div>
+      <div class="center-content">
+        <div class="items" v-for="item of 10" :key="item">
+          <span class="title">{{list.title}}</span>
+          <div class="item" v-for="i of list.app" :key="i">
+            <img :src="i.image" alt="">
+            <span>{{i.title}}</span>
+          </div>
+        </div>
+      </div>
+      <div class="right-content">
+        <div class="items">
+          <span class="title">Productivity</span>
+          <div class="item">
+            <img v-for="i of list.app" :key="i" :src="i.image">
+            <img v-for="i of list.app" :key="i" :src="i.image">
+          </div>
+        </div>
+        <div class="items">
+          <span class="title">Explore</span>
+          <div class="item">
+            <img v-for="i of list.app" :key="i" :src="i.image">
+            <img v-for="i of list.app" :key="i" :src="i.image">
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="./renderer.js"></script>
+  <script>
+    const {ipcRenderer, remote} = require('electron');
+    const {dialog} = remote;
+    function showAbout(type, title, message) {
+      //type warning, info, question, error
+      dialog.showMessageBox({
+        title: title,
+        buttons: ['Close'],
+        type: type,
+        message: message,
+      });
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.min.js"></script>
+  <script src="./src/main.js"></script>
+</body>
+
+</html>

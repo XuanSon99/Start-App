@@ -1,0 +1,157 @@
+* {
+    padding: 0;
+    margin: 0;
+    color: #fff;
+    font-size: 22px;
+    font-family: sans-serif;
+}
+
+main {
+    width: 100%;
+    height: 100vh;
+    background: #222;
+    display: flex;
+}
+
+.nav {
+    width: 80px;
+    height: 100vh;
+    transform: rotate(180deg);
+    transition: all 200ms ease;
+    position: fixed;
+    overflow: hidden;
+}
+
+.nav p {
+    margin: 0;
+    width: 295px;
+    transition: all 200ms ease;
+    opacity: 0;
+}
+
+.nav:hover {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 380px;
+    z-index: 10px;
+    background: rgba(34, 34, 34, 0.98);
+    box-shadow: 4px 4px 10px #000, 4px 4px 20px #000;
+}
+
+.nav:hover p {
+    opacity: 1;
+}
+.nav:hover span{
+    justify-content: flex-start;
+}
+
+.center-content {
+    margin-left: 80px;
+    transition: all 200ms ease;
+}
+.nav span i{
+    padding: 29px;
+}
+.nav span:nth-child(4) i{
+    padding: 29px 31px;
+    margin-right: 1px;
+}
+.nav span:nth-child(5) i{
+    margin-right: 1px;
+}
+
+.nav span {
+    display: flex;
+    align-items: center;
+    height: 80px;
+    width: 100%;
+    color: #fff;
+    font-size: 24px;
+    transform: rotate(180deg);
+    transition: all 200ms ease;
+}
+
+.nav span:hover {
+    background: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+}
+
+.center-content {
+    width: calc(50% - 80px);
+    height: 100vh;
+    padding: 0 20px;
+    overflow: scroll;
+}
+
+.title {
+    display: flex;
+    height: 80px;
+    width: 100%;
+    align-items: center;
+}
+
+.center-content .items img {
+    height: 80px;
+    width: 80px;
+    object-fit: cover;
+    margin-right: 20px;
+    background: #0078D4;
+}
+
+.center-content .items .item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    transition: all 200ms ease;
+    cursor: pointer;
+}
+
+.center-content .items .item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.center-content .items .item span {
+    display: block;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+.right-content {
+    width: 50%;
+    height: 100vh;
+    padding: 0 20px;
+    overflow: scroll;
+}
+
+.right-content .items {
+    width: 100%;
+}
+
+.right-content .items .item {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    overflow: hidden;
+    max-height: 410px;
+}
+
+.right-content .items .item img {
+    height: 200px;
+    width: 200px;
+    object-fit: cover;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    background: #0078D4;
+    transition: all 200ms ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.right-content .items .item img:hover {
+    opacity: 0.8;
+}
