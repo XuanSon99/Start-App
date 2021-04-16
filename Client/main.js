@@ -29,7 +29,7 @@ new Vue({
       db.get('token')
         .remove()
         .write()
-      remote.getCurrentWindow().close()
+      ipcRenderer.sendSync('auth', "")
     }
   }
 })
