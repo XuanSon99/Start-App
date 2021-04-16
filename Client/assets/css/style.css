@@ -42,7 +42,8 @@ main {
 .nav:hover p {
     opacity: 1;
 }
-.nav:hover span{
+
+.nav:hover button {
     justify-content: flex-start;
 }
 
@@ -50,18 +51,21 @@ main {
     margin-left: 80px;
     transition: all 200ms ease;
 }
-.nav span i{
+
+.nav button i {
     padding: 29px;
 }
-.nav span:nth-child(4) i{
+
+.nav button:nth-child(4) i {
     padding: 29px 31px;
     margin-right: 1px;
 }
-.nav span:nth-child(5) i{
+
+.nav button:nth-child(5) i {
     margin-right: 1px;
 }
 
-.nav span {
+.nav button {
     display: flex;
     align-items: center;
     height: 80px;
@@ -72,7 +76,7 @@ main {
     transition: all 200ms ease;
 }
 
-.nav span:hover {
+.nav button:hover {
     background: rgba(255, 255, 255, 0.1);
     cursor: pointer;
 }
@@ -154,4 +158,65 @@ main {
 
 .right-content .items .item img:hover {
     opacity: 0.8;
+}
+
+.nav button {
+    background: none;
+    border: none;
+    outline: none;
+}
+
+.nav button p {
+    text-align: left;
+}
+
+.login {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: url('https://free4kwallpapers.com/uploads/originals/2020/09/11/firewatch-dark-version-wallpaper.jpg') center;
+    background-size: cover;
+}
+
+.login form {
+    width: 400px;
+    padding: 80px 50px;
+    background: rgba(34, 34, 34, 0.8);
+    border-radius: 15px;
+    box-shadow: 4px 4px 10px #000, -4px -4px 10px rgb(55, 55, 55);
+}
+
+.login input {
+    display: block;
+    width: calc(100% - 40px);
+    height: 50px;
+    margin-bottom: 30px;
+    border-radius: 50px;
+    border: none;
+    padding: 0 20px;
+    background: none;
+    box-shadow: 4px 4px 10px #000, -4px -4px 10px #383838;
+    outline: none;
+}
+
+.login input:last-child {
+    width: 200px;
+    margin: 0 auto;
+    cursor: pointer;
+}
+.login input::placeholder{
+    color: rgba(255, 255, 255, 0.493);
+}
+
+.login input:focus {
+    box-shadow: 4px 4px 10px #000, -4px -4px 10px #383838, inset 4px 4px 10px #000, inset -4px -4px 10px #383838;
+}
+
+.login input:last-child:active {
+    width: 200px;
+    margin: 0 auto;
+    cursor: pointer;
+    box-shadow: 4px 4px 10px #000, -4px -4px 10px #383838, inset 4px 4px 10px #000, inset -4px -4px 10px #383838;
 }

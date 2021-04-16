@@ -1,19 +1,21 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 
-function createWindow() {
+let mainWindow
+let login
+
+function createWindow () {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+  mainWindow = new BrowserWindow({
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       webSecurity: false,
       nodeIntegration: true,
-      enableRemoteModule: true,
+      enableRemoteModule: true
       // "devTools": false,
-    }
+    },
+    show: false
   })
 
   // and load the index.html of the app.
@@ -22,6 +24,21 @@ function createWindow() {
   mainWindow.maximize()
   // Open the DevTools.
   mainWindow.webContents.openDevTools()
+
+  login = new BrowserWindow({
+    parent: mainWindow,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      // devTools: false,
+      nodeIntegration: true,
+      enableRemoteModule: true
+    }
+    // icon: __dirname + '/icon/king.png'
+  })
+  login.loadFile('Client/components/Login.html')
+  login.setMenuBarVisibility(false)
+  login.webContents.openDevTools()
+  login.maximize()
 }
 
 // This method will be called when Electron has finished
@@ -44,5 +61,9 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+ipcMain.on('entry-accepted', (event, arg) => {
+  if (arg == 'ping') {
+    mainWindow.show()
+    login.hide()
+  }
+})

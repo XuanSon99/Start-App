@@ -24,5 +24,12 @@ new Vue({
       }
     }
   },
-  methods: {}
+  methods: {
+    logoutHandle () {
+      db.get('token')
+        .remove()
+        .write()
+      remote.getCurrentWindow().close()
+    }
+  }
 })

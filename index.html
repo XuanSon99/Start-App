@@ -7,18 +7,18 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
     integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
     crossorigin="anonymous" />
-  <link rel="stylesheet" href="src/assets/css/style.css">
+  <link rel="stylesheet" href="Client/assets/css/style.css">
 </head>
 
 <body>
   <div id="app">
     <main>
       <div class="nav">
-        <span><i class="fas fa-power-off"></i><p>Power</p></span>
-        <span><i class="fas fa-cog"></i><p>Settings</p></span>
-        <span><i class="fas fa-image"></i><p>Pictures</p></span>
-        <span><i class="far fa-file"></i><p>Documents</p></span>
-        <span><i class="fas fa-user-circle"></i><p>Cowboy</p></span>
+        <button @click="logoutHandle"><i class="fas fa-power-off"></i><p>Power</p></button>
+        <button><i class="fas fa-cog"></i><p>Settings</p></button>
+        <button><i class="fas fa-image"></i><p>Pictures</p></button>
+        <button><i class="far fa-file"></i><p>Documents</p></button>
+        <button><i class="fas fa-user-circle"></i><p>Cowboy</p></button>
       </div>
       <div class="center-content">
         <div class="items" v-for="item of 10" :key="item">
@@ -48,6 +48,7 @@
     </main>
   </div>
   <script src="./renderer.js"></script>
+  <script src="Server/database.js"></script>
   <script>
     const {ipcRenderer, remote} = require('electron');
     const {dialog} = remote;
@@ -62,7 +63,7 @@
     }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.min.js"></script>
-  <script src="./src/main.js"></script>
+  <script src="./Client/main.js"></script>
 </body>
 
 </html>
