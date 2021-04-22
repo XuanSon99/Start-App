@@ -11,56 +11,153 @@
 </head>
 
 <body>
-    <div class="login">
-        <form>
-            <input type="email" id="email" required placeholder="Email">
-            <input type="password" id="password" required placeholder="Password">
-            <input type="submit" value="Đăng nhập" onclick="loginHandle()">
-        </form>
+    <div class="main">
+        <div>
+            <div class="user"></div>
+            <div class="login-menu">
+                <span class="active">Đăng nhập</span>
+                <span>Đăng ký</span>
+            </div>
+            <div class="content">
+                <form class="login">
+                    <input type="text" id="username" placeholder="Username">
+                    <div>
+                        <input type="password" id="password" placeholder="Password">
+                        <span onclick="loginHandle()"><img src="../assets/icon/arrow.svg" alt=""></span>
+                    </div>
+                    <p class="error"></p>
+                </form>
+                <form class="signup">
+                    <input type="text" id="display_name" placeholder="Tên hiển thị">
+                    <input type="text" id="username2" placeholder="Username">
+                    <input type="number" id="phone" placeholder="Điện thoại">
+                    <input type="email" id="email2" placeholder="Email">
+                    <input type="password" id="password2" placeholder="Mật khẩu">
+                    <div>
+                        <input type="password" id="repassword" placeholder="Xác nhận mật khẩu">
+                        <span onclick="signupHandle()"><img src="../assets/icon/arrow.svg" alt=""></span>
+                    </div>
+                    <p class="error2"></p>
+                </form>
+            </div>
+        </div>
     </div>
     <script src="../../Server/database.js"></script>
     <script>
         let $ = require('jquery');
-        const {ipcRenderer} = require('electron')
+        const {ipcRenderer, remote} = require('electron')
+        const {dialog} = remote;
+        function showAbout(type, title, message) {
+            dialog.showMessageBox({
+                title: title,
+                buttons: ['Close'],
+                type: type,
+                message: message,
+            });
+        }
+
         let token = db.get("token").value()[0]
         if (token) {
             ipcRenderer.sendSync('auth', 'logged')
         }
+
         function validateEmail(email) {
             const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
             return re.test(String(email).toLowerCase());
         }
+        function validPhone(phone) {
+            const reg = /((09|03|07|08|05)+([0-9]{8})\b)/g;
+            return reg.test(phone);
+        }
+
+        let menu = document.querySelectorAll(".login-menu span")
+        let form = document.querySelectorAll(".content form")
+        for (let i = 0; i < menu.length; i++) {
+            menu[i].onclick = function () {
+                menu.forEach(item => {
+                    item.classList.remove("active");
+                });
+                menu[i].classList.add("active");
+                form.forEach(item => {
+                    item.style.display = "none"
+                });
+                form[i].style.display = "block"
+            }
+        }
+
         const loginHandle = () => {
-            db.get('token').push("lala").write();
-            // location.reload()
+            let username = $('#username').val()
+            let password = $('#password').val()
+            if (!username || !password) {
+                $('.error').text("Vui lòng nhập đủ thông tin!")
+                return;
+            }
+            let data = {
+                username: username,
+                password: password
+            }
+            axios.post('http://207.148.64.50/api/auth/login', data)
+                .then(function (response) {
+                    if (response.data.status == true) {
+                        location.reload()
+                        db.get('token').remove().write();
+                        db.get('token').push(response.data.data[0].token).write();
+                    }
+                })
+                .catch((error) => {
+                    $('.error').text("Tài khoản hoặc mật khẩu không chính xác!")
+                })
+        }
+        const signupHandle = () => {
+            let email = $('#email2').val()
+            let password = $('#password2').val()
+            let display_name = $('#display_name').val()
+            let repassword = $('#repassword').val()
+            let username = $('#username2').val()
+            let phone = $('#phone').val()
 
+            if (!email || !password || !display_name || !repassword || !username || !phone) {
+                $('.error2').text("Vui lòng nhập đủ thông tin")
+                return;
+            }
+            if (!validateEmail(email)) {
+                $('.error2').text("Email không chính xác")
+                return;
+            }
+            if (username.length < 6) {
+                $('.error2').text("Username phải có từ 6 ký tự trở lên!")
+                return;
+            }
+            if (password.length < 6) {
+                $('.error2').text("Password phải có từ 6 ký tự trở lên!")
+                return;
+            }
+            if (password != repassword) {
+                $('.error2').text("Xác nhận mật khẩu không chính xác!")
+                return;
+            }
+            if (!validPhone(phone)) {
+                $('.error2').text("Số điện thoại không chính xác!")
+                return;
+            }
 
-            //     let email = $('#email').val()
-            //     let password = $('#password').val()
-            //     if (!email || !password) {
-            //         $('#errors').text("Vui lòng nhập đủ thông tin")
-            //         return;
-            //     }
-            //     if (!validateEmail(email)) {
-            //         $('#errors').text("Email không chính xác")
-            //         return;
-            //     }
-            //     let data = {
-            //         username: email,
-            //         password: password
-            //     }
-            //     axios.post('http://quanli.mysong.vn/api/login-tool', data)
-            //         .then(function (response) {
-            //             console.log(response.data);
-            //             if (response.data.status == true) {
-            //                 location.reload()
-            //                 db.get('token').remove().write();
-            //                 db.get('token').push(response.data.token).write();
-            //                 location.reload()
-            //             } else {
-            //                 $('#errors').text("Mật khẩu không chính xác")
-            //             }
-            //         })
+            let data = {
+                email: email,
+                display_name: display_name,
+                password: password,
+                username: username,
+                phone: phone
+            }
+
+            axios.post('http://207.148.64.50/api/auth/register', data)
+                .then(function (response) {
+                    $('.error2').text("")
+                    showAbout("info", "Thông báo", "Đăng ký thành công!")
+                    let input = document.querySelectorAll(".signup input")
+                    input.forEach(item => {
+                        item.value = ""
+                    });
+                })
         }
     </script>
 </body>

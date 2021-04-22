@@ -170,53 +170,105 @@ main {
     text-align: left;
 }
 
-.login {
-    width: 100%;
-    height: 100vh;
+.main {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: url('https://free4kwallpapers.com/uploads/originals/2020/09/11/firewatch-dark-version-wallpaper.jpg') center;
+    height: 100vh;
+    background: url("https://i.pinimg.com/originals/f7/24/1d/f7241dd594e9ad10dc00e2f392b1348f.jpg") center;
     background-size: cover;
 }
 
-.login form {
-    width: 400px;
-    padding: 80px 50px;
-    background: rgba(34, 34, 34, 0.8);
-    border-radius: 15px;
-    box-shadow: 4px 4px 10px #000, -4px -4px 10px rgb(55, 55, 55);
-}
-
-.login input {
+.main input {
     display: block;
-    width: calc(100% - 40px);
-    height: 50px;
-    margin-bottom: 30px;
-    border-radius: 50px;
-    border: none;
-    padding: 0 20px;
-    background: none;
-    box-shadow: 4px 4px 10px #000, -4px -4px 10px #383838;
+    height: 35px;
+    width: 300px;
+    margin-bottom: 15px;
+    padding: 0 10px;
+    color: #222;
+    font-size: 16px;
+    border: 2px solid #6ec0ff;
+    box-shadow: 0 0 5px #6ec0ff;
     outline: none;
+    border-radius: 2px;
 }
 
-.login input:last-child {
-    width: 200px;
-    margin: 0 auto;
+.main input:focus {
+    border: 2px solid #6ec0ff;
+    box-shadow: 0 0 5px #6ec0ff;
+}
+
+.main form div {
+    display: flex;
+    align-items: center;
+    /* margin-bottom: 100px; */
+}
+
+.main form div input {
+    width: 263px;
+}
+
+.main .content div span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 35px;
+    width: 35px;
+    border: 2px solid #6ec0ff;
     cursor: pointer;
-}
-.login input::placeholder{
-    color: rgba(255, 255, 255, 0.493);
-}
-
-.login input:focus {
-    box-shadow: 4px 4px 10px #000, -4px -4px 10px #383838, inset 4px 4px 10px #000, inset -4px -4px 10px #383838;
+    background: #3eabff;
+    box-shadow: 0 0 5px #6ec0ff;
+    margin-bottom: 15px;
+    border-left: none;
 }
 
-.login input:last-child:active {
-    width: 200px;
+.main div span img {
+    height: 30px;
+    width: 30px;
+    filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(50deg) brightness(111%) contrast(93%);
+}
+
+.main .user {
+    height: 180px;
+    width: 180px;
+    background-size: cover;
+    background: url("https://winaero.com/blog/wp-content/uploads/2018/08/Windows-10-user-icon-big.png") center;
+    border-radius: 50%;
     margin: 0 auto;
+    margin-bottom: 20px;
+    opacity: 0.6;
+}
+
+.main .signup {
+    display: none;
+}
+
+.main .content p {
+    color: #ff5c77;
+    font-size: 16px;
+}
+
+.login-menu span.active {
+    color: #3eabff;
+    border-bottom: 4px solid #3eabff;
+}
+
+.login-menu {
+    margin-bottom: 20px;
+    display: flex;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+}
+
+.login-menu span {
+    display: flex;
+    margin-right: 20px;
     cursor: pointer;
-    box-shadow: 4px 4px 10px #000, -4px -4px 10px #383838, inset 4px 4px 10px #000, inset -4px -4px 10px #383838;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #fff;
+    width: 100px;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 600;
 }
