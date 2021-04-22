@@ -11,154 +11,176 @@
 </head>
 
 <body>
-    <div class="main">
-        <div>
-            <div class="user"></div>
-            <div class="login-menu">
-                <span class="active">Đăng nhập</span>
-                <span>Đăng ký</span>
-            </div>
-            <div class="content">
-                <form class="login">
-                    <input type="text" id="username" placeholder="Username">
-                    <div>
-                        <input type="password" id="password" placeholder="Password">
-                        <span onclick="loginHandle()"><img src="../assets/icon/arrow.svg" alt=""></span>
-                    </div>
-                    <p class="error"></p>
-                </form>
-                <form class="signup">
-                    <input type="text" id="display_name" placeholder="Tên hiển thị">
-                    <input type="text" id="username2" placeholder="Username">
-                    <input type="number" id="phone" placeholder="Điện thoại">
-                    <input type="email" id="email2" placeholder="Email">
-                    <input type="password" id="password2" placeholder="Mật khẩu">
-                    <div>
-                        <input type="password" id="repassword" placeholder="Xác nhận mật khẩu">
-                        <span onclick="signupHandle()"><img src="../assets/icon/arrow.svg" alt=""></span>
-                    </div>
-                    <p class="error2"></p>
-                </form>
+    <div class="bg">
+        <div class="main">
+            <div>
+                <div class="user"></div>
+                <div class="login-menu">
+                    <span class="active">Đăng nhập</span>
+                    <span>Đăng ký</span>
+                </div>
+                <div class="content">
+                    <form class="login">
+                        <input type="text" v-model="login.username" placeholder="Username" v-if="!login.error">
+                        <div v-if="!login.error">
+                            <input type="password" v-model="login.password" placeholder="Password">
+                            <button type="submit" @click="loginHandle(event)"><img src="../assets/icon/arrow.svg"
+                                    alt=""></button>
+                        </div>
+                        <h5 v-if="!login.error" @click="isShow">Sign-in options</h5>
+                        <div class="social" v-if="show && !login.error">
+                            <img src="../assets/icon/facebook.svg" alt="">
+                            <img src="../assets/icon/google.svg" alt="">
+                        </div>
+                        <p v-if="login.error">{{login.error}}</p>
+                        <span @click="login.error = ''" v-if="login.error">Ok</span>
+                    </form>
+                    <form class="signup">
+                        <input type="text" v-model="signup.display_name" placeholder="Tên hiển thị"
+                            v-if="!signup.error">
+                        <input type="text" v-model="signup.username" placeholder="Username" v-if="!signup.error">
+                        <input type="number" v-model="signup.phone" placeholder="Điện thoại" v-if="!signup.error">
+                        <input type="email" v-model="signup.email" placeholder="Email" v-if="!signup.error">
+                        <input type="password" v-model="signup.password" placeholder="Mật khẩu" v-if="!signup.error">
+                        <div v-if="!signup.error">
+                            <input type="password" v-model="signup.repassword" placeholder="Xác nhận mật khẩu">
+                            <button type="submit" @click="signupHandle(event)"><img src="../assets/icon/arrow.svg"
+                                    alt=""></button>
+                        </div>
+                        <p v-if="signup.error">{{signup.error}}</p>
+                        <span @click="signup.error = ''" v-if="signup.error">Ok</span>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
     <script src="../../Server/database.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.min.js"></script>
     <script>
-        let $ = require('jquery');
-        const {ipcRenderer, remote} = require('electron')
-        const {dialog} = remote;
-        function showAbout(type, title, message) {
-            dialog.showMessageBox({
-                title: title,
-                buttons: ['Close'],
-                type: type,
-                message: message,
-            });
-        }
-
-        let token = db.get("token").value()[0]
-        if (token) {
-            ipcRenderer.sendSync('auth', 'logged')
-        }
-
-        function validateEmail(email) {
-            const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-            return re.test(String(email).toLowerCase());
-        }
-        function validPhone(phone) {
-            const reg = /((09|03|07|08|05)+([0-9]{8})\b)/g;
-            return reg.test(phone);
-        }
-
-        let menu = document.querySelectorAll(".login-menu span")
-        let form = document.querySelectorAll(".content form")
-        for (let i = 0; i < menu.length; i++) {
-            menu[i].onclick = function () {
-                menu.forEach(item => {
-                    item.classList.remove("active");
-                });
-                menu[i].classList.add("active");
-                form.forEach(item => {
-                    item.style.display = "none"
-                });
-                form[i].style.display = "block"
-            }
-        }
-
-        const loginHandle = () => {
-            let username = $('#username').val()
-            let password = $('#password').val()
-            if (!username || !password) {
-                $('.error').text("Vui lòng nhập đủ thông tin!")
-                return;
-            }
-            let data = {
-                username: username,
-                password: password
-            }
-            axios.post('http://207.148.64.50/api/auth/login', data)
-                .then(function (response) {
-                    if (response.data.status == true) {
-                        location.reload()
-                        db.get('token').remove().write();
-                        db.get('token').push(response.data.data[0].token).write();
+        new Vue({
+            el: ".main",
+            data() {
+                return {
+                    login: {
+                        username: "",
+                        password: "",
+                        error: ""
+                    },
+                    signup: {
+                        username: "",
+                        password: "",
+                        phone: "",
+                        email: "",
+                        repassword: "",
+                        display_name: "",
+                        error: "",
+                    },
+                    show: false,
+                }
+            },
+            methods: {
+                isShow() {
+                    this.show = !this.show;
+                },
+                loginHandle(event) {
+                    event.preventDefault();
+                    if (!this.login.username || !this.login.password) {
+                        this.login.error = "Không được để trống. Thử lại!"
+                        return;
                     }
-                })
-                .catch((error) => {
-                    $('.error').text("Tài khoản hoặc mật khẩu không chính xác!")
-                })
-        }
-        const signupHandle = () => {
-            let email = $('#email2').val()
-            let password = $('#password2').val()
-            let display_name = $('#display_name').val()
-            let repassword = $('#repassword').val()
-            let username = $('#username2').val()
-            let phone = $('#phone').val()
+                    axios.post('http://207.148.64.50/api/auth/login', {
+                        username: this.login.username,
+                        password: this.login.password,
+                    })
+                        .then(function (response) {
+                            if (response.data.status == true) {
+                                location.reload()
+                                db.get('token').remove().write();
+                                db.get('token').push(response.data.data[0].token).write();
+                            }
+                        })
+                        .catch((error) => {
+                            this.login.error = "Tài khoản hoặc mật khẩu không chính xác!"
+                        })
+                },
+                signupHandle() {
+                    event.preventDefault();
+                    if (!this.signup.email || !this.signup.password || !this.signup.display_name || !this.signup.repassword || !this.signup.username || !this.signup.phone) {
+                        this.signup.error = "Không được để trống. Thử lại!"
+                        return;
+                    }
+                    if (!this.validateEmail(this.signup.email)) {
+                        this.signup.error = "Email không chính xác!"
+                        return;
+                    }
+                    if (this.signup.username.length < 6) {
+                        this.signup.error = "Username phải có từ 6 ký tự trở lên!"
+                        return;
+                    }
+                    if (this.signup.password.length < 6) {
+                        this.signup.error = "Password phải có từ 6 ký tự trở lên!"
+                        return;
+                    }
+                    if (this.signup.password != this.signup.repassword) {
+                        this.signup.error = "Xác nhận mật khẩu không chính xác!"
+                        return;
+                    }
+                    if (!this.validPhone(this.signup.phone)) {
+                        this.signup.error = "Số điện thoại không chính xác!"
+                        return;
+                    }
 
-            if (!email || !password || !display_name || !repassword || !username || !phone) {
-                $('.error2').text("Vui lòng nhập đủ thông tin")
-                return;
-            }
-            if (!validateEmail(email)) {
-                $('.error2').text("Email không chính xác")
-                return;
-            }
-            if (username.length < 6) {
-                $('.error2').text("Username phải có từ 6 ký tự trở lên!")
-                return;
-            }
-            if (password.length < 6) {
-                $('.error2').text("Password phải có từ 6 ký tự trở lên!")
-                return;
-            }
-            if (password != repassword) {
-                $('.error2').text("Xác nhận mật khẩu không chính xác!")
-                return;
-            }
-            if (!validPhone(phone)) {
-                $('.error2').text("Số điện thoại không chính xác!")
-                return;
-            }
+                    let data = {
+                        email: this.signup.email,
+                        display_name: this.signup.display_name,
+                        password: this.signup.password,
+                        username: this.signup.username,
+                        phone: this.signup.phone
+                    }
 
-            let data = {
-                email: email,
-                display_name: display_name,
-                password: password,
-                username: username,
-                phone: phone
-            }
+                    axios.post('http://207.148.64.50/api/auth/register', data)
+                        .then(function (response) {
+                            // this.signup.error = ""
+                            let input = document.querySelectorAll(".signup input")
+                            input.forEach(item => {
+                                item.value = ""
+                            });
+                        })
+                },
+                validateEmail(email) {
+                    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                    return re.test(String(email).toLowerCase());
+                },
+                validPhone(phone) {
+                    const reg = /((09|03|07|08|05)+([0-9]{8})\b)/g;
+                    return reg.test(phone);
+                }
+            },
+            mounted() {
+                let $ = require('jquery');
+                const {ipcRenderer, } = require('electron')
+                let token = db.get("token").value()[0]
+                if (token) {
+                    ipcRenderer.sendSync('auth', 'logged')
+                }
 
-            axios.post('http://207.148.64.50/api/auth/register', data)
-                .then(function (response) {
-                    $('.error2').text("")
-                    showAbout("info", "Thông báo", "Đăng ký thành công!")
-                    let input = document.querySelectorAll(".signup input")
-                    input.forEach(item => {
-                        item.value = ""
-                    });
-                })
-        }
+                let menu = document.querySelectorAll(".login-menu span")
+                let form = document.querySelectorAll(".content form")
+                for (let i = 0; i < menu.length; i++) {
+                    menu[i].onclick = function () {
+                        menu.forEach(item => {
+                            item.classList.remove("active");
+                        });
+                        menu[i].classList.add("active");
+                        form.forEach(item => {
+                            item.style.display = "none"
+                        });
+                        form[i].style.display = "block"
+                    }
+                }
+            }
+        })
+
     </script>
 </body>
 
