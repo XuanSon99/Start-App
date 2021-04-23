@@ -29,7 +29,7 @@
                         </div>
                         <h5 v-if="!login.error" @click="isShow">Sign-in options</h5>
                         <div class="social" v-if="show && !login.error">
-                            <img src="../assets/icon/facebook.svg" alt="">
+                            <img @click="loginFb" src="../assets/icon/facebook.svg" alt="">
                             <img src="../assets/icon/google.svg" alt="">
                         </div>
                         <p v-if="login.error">{{login.error}}</p>
@@ -57,6 +57,7 @@
     <script src="../../Server/database.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.min.js"></script>
     <script>
+        const {ipcRenderer} = require('electron');
         new Vue({
             el: ".main",
             data() {
@@ -79,6 +80,9 @@
                 }
             },
             methods: {
+                loginFb() {
+                    ipcRenderer.send("fb-authenticate", "yes");
+                },
                 isShow() {
                     this.show = !this.show;
                 },
