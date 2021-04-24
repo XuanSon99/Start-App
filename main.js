@@ -1,11 +1,12 @@
 const { app, BrowserWindow, ipcMain, session } = require('electron')
 const path = require('path')
 const FB = require('fb')
+const ElectronGoogleOAuth2 = require('@getstation/electron-google-oauth2').default;
 
 let mainWindow
 let login
 
-function createWindow () {
+function createWindow() {
   mainWindow = new BrowserWindow({
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -20,9 +21,10 @@ function createWindow () {
   mainWindow.setMenuBarVisibility(false)
   mainWindow.maximize()
   mainWindow.webContents.openDevTools()
+  // mainWindow.loadURL("http://localhost:3000");
 }
 
-function loginWindow () {
+function loginWindow() {
   login = new BrowserWindow({
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -48,6 +50,12 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
   app.quit()
 })
+
+// app.on('certificate-error', function (event, webContents, url, error,
+//   certificate, callback) {
+//   event.preventDefault();
+//   callback(true);
+// });
 
 ipcMain.on('auth', (event, arg) => {
   if (arg == 'logged') {
@@ -75,7 +83,8 @@ ipcMain.on('fb-authenticate', function (event, arg) {
     parent: login,
     modal: true,
     webPreferences: {
-      nodeIntegration: false
+      nodeIntegration: false,
+      devTools: false
     }
   })
   // authWindow.maximize()
@@ -95,6 +104,7 @@ ipcMain.on('fb-authenticate', function (event, arg) {
     error = /\?error=(.+)$/.exec(url)
 
     if (access_token || error) {
+      event.reply("token_fb", { token });
       closedByUser = false
       FB.setAccessToken(access_token)
       FB.api(
@@ -103,19 +113,7 @@ ipcMain.on('fb-authenticate', function (event, arg) {
           fields: ['id', 'name', 'picture.width(800).height(800)']
         },
         function (res) {
-          mainWindow.webContents.executeJavaScript(
-            'document.getElementById("fb-name").innerHTML = " Name: ' +
-              res.name +
-              '"'
-          )
-          mainWindow.webContents.executeJavaScript(
-            'document.getElementById("fb-id").innerHTML = " ID: ' + res.id + '"'
-          )
-          mainWindow.webContents.executeJavaScript(
-            'document.getElementById("fb-pp").src = "' +
-              res.picture.data.url +
-              '"'
-          )
+          // event.reply("token_gg", { token });
         }
       )
       authWindow.close()
@@ -134,8 +132,20 @@ ipcMain.on('fb-authenticate', function (event, arg) {
   authWindow.on(
     'close',
     () =>
-      (event.returnValue = closedByUser
-        ? { error: 'The popup window was closed' }
-        : { access_token, error })
+    (event.returnValue = closedByUser
+      ? { error: 'The popup window was closed' }
+      : { access_token, error })
   )
+})
+
+ipcMain.on('gg-authenticate', function (event, arg) {
+  const myApiOauth = new ElectronGoogleOAuth2(
+    '54859907240-h5q8nl05vlo77j5pv6u1v663750v26mm.apps.googleusercontent.com',
+    'BR6EiqQ2qIZ2COpIO2X9akhj',
+    ['https://www.googleapis.com/auth/drive.metadata.readonly']
+  );
+  myApiOauth.openAuthWindowAndGetTokens()
+    .then(token => {
+      event.reply("token_gg", { token });
+    });
 })

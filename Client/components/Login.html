@@ -30,7 +30,7 @@
                         <h5 v-if="!login.error" @click="isShow">Sign-in options</h5>
                         <div class="social" v-if="show && !login.error">
                             <img @click="loginFb" src="../assets/icon/facebook.svg" alt="">
-                            <img src="../assets/icon/google.svg" alt="">
+                            <img @click="loginGg" src="../assets/icon/google.svg" alt="">
                         </div>
                         <p v-if="login.error">{{login.error}}</p>
                         <span @click="login.error = ''" v-if="login.error">Ok</span>
@@ -57,7 +57,7 @@
     <script src="../../Server/database.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.min.js"></script>
     <script>
-        const {ipcRenderer} = require('electron');
+        const { ipcRenderer } = require('electron');
         new Vue({
             el: ".main",
             data() {
@@ -81,7 +81,10 @@
             },
             methods: {
                 loginFb() {
-                    ipcRenderer.send("fb-authenticate", "yes");
+                    ipcRenderer.send("fb-authenticate");
+                },
+                loginGg() {
+                    ipcRenderer.send("gg-authenticate");
                 },
                 isShow() {
                     this.show = !this.show;
@@ -162,9 +165,11 @@
             },
             mounted() {
                 let $ = require('jquery');
-                const {ipcRenderer, } = require('electron')
-                let token = db.get("token").value()[0]
-                if (token) {
+                const { ipcRenderer, } = require('electron')
+
+                if (db.get("token").value()[0] ||
+                    db.get("gg").value()[0] ||
+                    db.get("fb").value()[0]) {
                     ipcRenderer.sendSync('auth', 'logged')
                 }
 
@@ -182,6 +187,18 @@
                         form[i].style.display = "block"
                     }
                 }
+
+                ipcRenderer.on("token_gg", async (event, arg) => {
+                    location.reload()
+                    db.get('gg').remove().write();
+                    db.get('gg').push(arg).write();
+                });
+
+                ipcRenderer.on("token_fb", async (event, arg) => {
+                    location.reload()
+                    db.get('fb').remove().write();
+                    db.get('fb').push(arg).write();
+                });
             }
         })
 
